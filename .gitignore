@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+frontend/.streamlit/secrets.toml
+
+# Databases
+*.db
+*.sqlite3
+
+# Alembic
+alembic/versions/__pycache__/
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# Distribution / packaging
+.Python
+pip-wheel-metadata/
+share/python-wheels/
