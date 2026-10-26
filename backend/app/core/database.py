@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.core.config import settings
@@ -13,7 +13,17 @@ def _make_engine_url(url: str) -> str:
 
 
 def get_engine():
-    return create_engine(_make_engine_url(settings.DATABASE_URL))
+    url = _make_engine_url(settings.DATABASE_URL)
+    # Supabase requires SSL for external connections
+    connect_args = {}
+    if "supabase.co" in url or "supabase.com" in url:
+        connect_args = {"sslmode": "require"}
+    return create_engine(
+        url,
+        connect_args=connect_args,
+        pool_pre_ping=True,  # test connection before using from pool
+        pool_recycle=300,    # recycle connections every 5 min
+    )
 
 
 # Lazy singletons — constructed on first use, not at import time
@@ -35,7 +45,7 @@ def get_db():
         db.close()
 
 
-# Keep a module-level reference for Alembic env.py
+# Keep a module-level reference for Alembic env.py and startup
 def get_session_factory():
     global _engine, _SessionLocal
     if _engine is None:
