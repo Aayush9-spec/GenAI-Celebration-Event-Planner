@@ -4,7 +4,10 @@ from typing import Optional
 import requests
 import streamlit as st
 
-BACKEND_URL = st.secrets.get("BACKEND_URL", os.getenv("BACKEND_URL", "http://localhost:8000"))
+try:
+    BACKEND_URL = st.secrets["BACKEND_URL"]
+except (KeyError, FileNotFoundError):
+    BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 
 def get_headers() -> dict:
