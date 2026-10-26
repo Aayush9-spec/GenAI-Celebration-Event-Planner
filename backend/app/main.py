@@ -52,22 +52,16 @@ def health_check():
 
 
 # ---------------------------------------------------------------------------
-# Startup: run Alembic migrations automatically
+# Startup: create all tables via SQLAlchemy (works on any platform/host)
 # ---------------------------------------------------------------------------
 @app.on_event("startup")
-def run_migrations():
-    """Run alembic upgrade head on startup so Supabase schema is always current."""
-    import subprocess, sys, os
+def create_tables():
+    """Create all DB tables on startup if they don't already exist."""
     try:
-        result = subprocess.run(
-            ["alembic", "upgrade", "head"],
-            cwd=os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode != 0:
-            print(f"[WARN] Alembic migration warning: {result.stderr[:500]}")
-        else:
-            print("[INFO] Alembic migrations applied.")
+        from app.core.database import get_engine, Base
+        import app.models  # noqa: F401 — registers all models on Base.metadata
+        engine = get_engine()
+        Base.metadata.create_all(bind=engine)
+        print("[INFO] Database tables created/verified OK.")
     except Exception as e:
-        print(f"[WARN] Could not run migrations: {e}")
+        print(f"[ERROR] Could not create tables: {e}")
