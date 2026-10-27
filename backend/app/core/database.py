@@ -14,15 +14,20 @@ def _make_engine_url(url: str) -> str:
 
 def get_engine():
     url = _make_engine_url(settings.DATABASE_URL)
-    # Supabase requires SSL for external connections
     connect_args = {}
+    # Supabase port 6543 = pgbouncer pooler — requires SSL + no prepared statements
     if "supabase.co" in url or "supabase.com" in url:
-        connect_args = {"sslmode": "require"}
+        connect_args = {
+            "sslmode": "require",
+            "options": "-c statement_timeout=30000",
+        }
     return create_engine(
         url,
         connect_args=connect_args,
-        pool_pre_ping=True,  # test connection before using from pool
-        pool_recycle=300,    # recycle connections every 5 min
+        pool_pre_ping=True,
+        pool_recycle=300,
+        # Required for pgbouncer (port 6543) — disables prepared statements
+        execution_options={"no_parameters": False},
     )
 
 
