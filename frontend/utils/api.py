@@ -9,6 +9,9 @@ try:
 except (KeyError, FileNotFoundError):
     BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
+# Render free tier cold-start can take 50-60s — use generous timeout
+_TIMEOUT = 90
+
 
 def get_headers() -> dict:
     """Return Authorization header from session state token."""
@@ -20,19 +23,19 @@ def get_headers() -> dict:
 
 def api_post(path: str, json: dict = None, authenticated: bool = False) -> requests.Response:
     headers = get_headers() if authenticated else {"Content-Type": "application/json"}
-    return requests.post(f"{BACKEND_URL}{path}", json=json, headers=headers, timeout=30)
+    return requests.post(f"{BACKEND_URL}{path}", json=json, headers=headers, timeout=_TIMEOUT)
 
 
 def api_get(path: str, params: dict = None) -> requests.Response:
-    return requests.get(f"{BACKEND_URL}{path}", params=params, headers=get_headers(), timeout=30)
+    return requests.get(f"{BACKEND_URL}{path}", params=params, headers=get_headers(), timeout=_TIMEOUT)
 
 
 def api_put(path: str, json: dict = None) -> requests.Response:
-    return requests.put(f"{BACKEND_URL}{path}", json=json, headers=get_headers(), timeout=30)
+    return requests.put(f"{BACKEND_URL}{path}", json=json, headers=get_headers(), timeout=_TIMEOUT)
 
 
 def api_delete(path: str) -> requests.Response:
-    return requests.delete(f"{BACKEND_URL}{path}", headers=get_headers(), timeout=30)
+    return requests.delete(f"{BACKEND_URL}{path}", headers=get_headers(), timeout=_TIMEOUT)
 
 
 def is_authenticated() -> bool:

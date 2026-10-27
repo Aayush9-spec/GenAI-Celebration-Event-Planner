@@ -32,6 +32,15 @@ st.markdown("""
 # AUTH GATE
 # ------------------------------------------------------------------
 if not is_authenticated():
+    # Cold-start notice for Render free tier
+    st.markdown("""
+<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);
+border-radius:12px;padding:0.7rem 1.2rem;margin-bottom:1rem;font-size:0.88rem;color:#fbbf24;text-align:center">
+    ☕ <b>First load notice:</b> The backend server may take ~30-60 seconds to wake up on first request (Render free tier).
+    Please be patient — it only happens once per session.
+</div>
+""", unsafe_allow_html=True)
+
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""

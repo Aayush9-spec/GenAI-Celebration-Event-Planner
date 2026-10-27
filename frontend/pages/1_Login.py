@@ -38,7 +38,7 @@ with col2:
             if not username or not password:
                 st.error("Please enter both username and password.")
             else:
-                with st.spinner("Signing in..."):
+                with st.spinner("Signing in... (first request may take ~30s to wake the server ☕)"):
                     try:
                         resp = api_post("/auth/login", json={"username": username, "password": password})
                         if resp.status_code == 200:
@@ -78,7 +78,7 @@ with col2:
             elif len(reg_password) < 8:
                 st.error("Password must be at least 8 characters.")
             else:
-                with st.spinner("Creating your account..."):
+                with st.spinner("Creating account... (first request may take ~30s to wake the server ☕)"):
                     try:
                         resp = api_post("/auth/register", json={
                             "username": reg_username,
